@@ -79,7 +79,7 @@ while True:
                 return time_range[0] <= time <= time_range[1]
         print(int(now.strftime("%S")))
         print((now.strftime("%S")))
-        #Déclarer la séquence de port a knock
+        # Create hotp token
         def get_hotp_token(secret, intervals_no):
             key = base64.b32decode(secret, True)
             msg = struct.pack(">Q", intervals_no)
@@ -98,10 +98,10 @@ while True:
                 x+='0'
             return x
         if int(now.strftime("%S"))>=20 and int(now.strftime("%S"))<=30 :
-                    print("Prochain OTP trop proche, attendre 5 seconde")
+                    print("Next OTP too close, waiting for a new one")
                     sleep(6)
         if int(now.strftime("%S"))>=50 and int(now.strftime("%S"))<=59 :
-                    print("Prochain OTP trop proche, attendre 5 seconde")
+                    print("Next OTP too close, waiting for a new one")
                     sleep(6)
         #clé
         def get_totp_token_30(secret):
@@ -112,17 +112,17 @@ while True:
             return f
 
         if platform.system() == 'Linux':
-            ipserveur = input("Entrez adresse serveur :") or "localhost";
+            ipserveur = input("Enter server IP or press enter for localhost :") or "localhost";
             if ipserveur == "localhost":
-                print("Localhost par défault")
+                print("Localhost by default")
             print(int(now.strftime("%S")))
             if int(now.strftime("%S"))>=20 and int(now.strftime("%S"))<=30 :
-                print("Prochain OTP trop proche, attendre 5 seconde")
+                print("Next OTP too close, waiting for a new one")
                 sleep(11)
             if int(now.strftime("%S"))>=50 and int(now.strftime("%S"))<=59 :
-                print("Prochain OTP trop proche, attendre 5 seconde")
+                print("Next OTP too close, waiting for a new one")
                 sleep(11)
-            data = input("Entrez code OTP : \n");
+            data = input("Enter TOTP code : \n");
             lecodeutiise = data
             print("telnet {} {}".format(ipserveur, (get_totp_token(secretport1cle))[:-2]));
             # Create a client socket
@@ -181,9 +181,9 @@ while True:
                 os.execl(sys.executable, sys.executable, *sys.argv)
         elif platform.system() == 'Windows':
             print("Windows")
-            ipserveur = input("Entrez adresse serveur :") or "localhost";
+            ipserveur = input("Enter server IP or press enter for localhost") or "localhost";
             if ipserveur == "localhost":
-                print("Localhost par défault")
+                print("Localhost by default")
             data = input("Entrez code OTP : \n");
             lecodeutiise = data
             print("telnet {} {}".format(ipserveur, (get_totp_token(secretport1cle))[:-2]));
@@ -224,15 +224,18 @@ while True:
                 print("nc -vz {} {}".format(ipserveur, (get_totp_token(secretport3cle))[:-2], 2))
                 os.execl(sys.executable, sys.executable, *sys.argv)
             elif dataFromServer == (b'Hello Client!') and lecodeutiise == (get_totp_token_30(secret)):
-                print("OTP - 30 OTP - 30 OTP - 30 OTP - 30 OTP - 30 :")
+                print("OTP - 30:")
                 sleep(3)
                 if int(now.strftime("%S"))>=25 and int(now.strftime("%S"))<=30 :
-                    print("Prochain OTP trop proche, attendre 5 seconde")
+                    print("Next code is too close, waiting for a new one ...")
                     sleep(7)
                 if int(now.strftime("%S"))>=55 and int(now.strftime("%S"))<=59 :
-                    print("Prochain OTP trop proche, attendre 5 seconde")
+                    print("Next code is too close, waiting for a new one ...")
                     sleep(7)
                 print(dataFromServer)
+                else:
+                print("Wrong code")
+                os.execl(sys.executable, sys.executable, *sys.argv)
                 #os.system("telnet {} {}".format(ipserveur, secretport1))
                 os.system("nc -vz {} {}".format(ipserveur, (get_totp_token_30(secretport1cle))[:-2], 2))
                 print("nc -vz {} {}".format(ipserveur, (get_totp_token_30(secretport1cle))[:-2], 2))
@@ -339,13 +342,13 @@ while True:
 
         while(True): 
             (clientConnected, clientAddress) = serverSocket.accept();
-            print("Requête depuis le client : %s:%s"%(clientAddress[0], clientAddress[1]));
+            print("Request from client : %s:%s"%(clientAddress[0], clientAddress[1]));
             dataFromClient = clientConnected.recv(1024)
-            print("Code reçu :%s"%(dataFromClient.decode()));
+            print("Code received :%s"%(dataFromClient.decode()));
 
             if (dataFromClient.decode()) != (get_totp_token(secret)) and (dataFromClient.decode()) != (get_totp_token_30(secret)) :
-                clientConnected.send("Mauvais code!".encode());
-                log_nonformat = 'Connection depuis {} avec un mauvais code le {}/{} a {}:{}:{}'.format((clientAddress[0]),(now.day),(now.month),(now.hour),(now.minute),(now.second))
+                clientConnected.send("Wrong code".encode());
+                log_nonformat = 'Connection from {} with wrong code {}/{} at {}:{}:{}'.format((clientAddress[0]),(now.day),(now.month),(now.hour),(now.minute),(now.second))
                 log_format = str(log_nonformat)
                 with open('logax.txt', 'a') as f:
                     f.write(log_format + '\n')
@@ -387,34 +390,34 @@ while True:
                             print('Knock depuis:', addr)
                             knock_sequence.append(PORTS[i])
                             if knock_sequence == PORTS:
-                        #nettoyer les règles déja éxistantes dans l'iptables
-                        #[EMPLACEMENT]
-                        #Créer une variable "s" qui convertira "addr" en str pour extraire l'ip source et l'utilisé dans la règle.
+                        #
+                        #
+                        #
                                 s = clientAddress[0]
                                 print(f"ClientAddress: {clientAddress}")
-                        #s = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', s).group+()
+                        #
                                 #now = datetime.datetime.now()
                                 print('sequence ok!')
-                                log_nonformat = 'Connection depuis {}  avec Sequence Normal le {}/{} a {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
+                                log_nonformat = 'Connection from {}  Normal sequence  {}/{} a {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
                                 log_format = str(log_nonformat)
                                 with open('logax.txt', 'a') as f:
                                     f.write(log_format + '\n')
-                        #ajouter li [INTERFACE] , si mauvaise par défault
+                        #
                                 os.system("iptables -I INPUT 1 -s {} -j ACCEPT ; echo regle_ouverture_valide".format(s))
                                 print('Ouverture du port pour {} '.format(s))
                                 time.sleep(5)
-                        #ajoute li [INTERFACE] , si mauvaise par défault
+                        #
                                 os.system("iptables -D INPUT 1 ; echo regle_fermeture_valide")
                                 print('Fermeture du port pour {}'.format(s))
                                 knock_sequence = []
                                 sleep(5)
                                 print("purge socket")
                                 serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                                #s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
+                                #
                                 serverSocket.close()
                                 conn.close()
-                                #s.close()
-                                #os.execv(sys.executable, ['python'] + sys.argv)                            
+                                #
+                                #                          
                                 s = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
                                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                                 serverSocket = socket.socket (socket.AF_INET, socket.SOCK_STREAM)
@@ -425,7 +428,7 @@ while True:
                 stockage = (dataFromClient.decode)
                 clientConnected.send("Hello Client!".encode())
                 #if int(now.strftime("%S"))>=32 and int(now.strftime("%S"))<=40 :
-                #    print("Prochain OTP trop proche, attendre 5 seconde")
+                #    print("Next TOTP too close waiting for a new one ...")
                 #    sleep(6)
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -466,7 +469,7 @@ while True:
                     #s = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', s).group+()
                             #now = datetime.datetime.now()
                             print('sequence ok!')
-                            log_nonformat = 'Connection depuis {} avec le code TOTP précédent le {}/{} a {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
+                            log_nonformat = 'Connection from {} with previous totp {}/{} at {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
                             log_format = str(log_nonformat)
                             with open('logax.txt', 'a') as f:
                                 f.write(log_format + '\n')
@@ -582,8 +585,8 @@ while True:
             print("client1")
             print(clientAddress[1])
             if (dataFromClient.decode()) != (get_totp_token(secret)) and (dataFromClient.decode()) != (get_totp_token_30(secret)):
-                clientConnected.send("Mauvais code!".encode());
-                log_nonformat = 'Connection depuis {} avec un mauvais code le {}/{} a {}:{}:{}'.format((clientAddress[0]),(now.day),(now.month),(now.hour),(now.minute),(now.second))
+                clientConnected.send("Wrong code".encode());
+                log_nonformat = 'Connection from {} with wrong code {}/{} a {}:{}:{}'.format((clientAddress[0]),(now.day),(now.month),(now.hour),(now.minute),(now.second))
                 log_format = str(log_nonformat)
                 with open('logax.txt', 'a') as f:
                     f.write(log_format + '\n')
@@ -633,7 +636,7 @@ while True:
                         #s = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', s).group+()
                                 #now = datetime.datetime.now()
                                 print('sequence ok!')
-                                log_nonformat = 'Connection depuis {}  avec Sequence Normal le {}/{} a {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
+                                log_nonformat = 'Connection from {}  with normal sequence {}/{} at {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
                                 log_format = str(log_nonformat)
                                 with open('logax.txt', 'a') as f:
                                     f.write(log_format + '\n')
@@ -704,7 +707,7 @@ while True:
                     #s = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', s).group+()
                             #now = datetime.datetime.now()
                             print('sequence ok!')
-                            log_nonformat = 'Connection depuis {} avec le code TOTP précédent le {}/{} a {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
+                            log_nonformat = 'Connection from {} with previous TOTP {}/{} a {}:{}:{}'.format((s),(now.day),(now.month),(now.hour),(now.minute),(now.second))
                             log_format = str(log_nonformat)
                             with open('logax.txt', 'a') as f:
                                 f.write(log_format + '\n')
