@@ -1,3 +1,5 @@
+-! Due to recent changes in the Python programming language, particularly in the newer versions, certain libraries, including Telnet and others, are no longer compatible with our current script. As a result, the existing version of the script won't work. An update is comming soon. !-
+
 # Knoot
 ![Pingu+Noot+white+edge](https://github.com/Wisp404/Knoot/assets/107390816/735d82b4-8747-4b19-8da7-485968bee244)
 
