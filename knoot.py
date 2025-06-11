@@ -91,12 +91,10 @@ while True:
             #unpacking
             return h
         def get_totp_token(secret):
-            #ensuring to give the same otp for 30 seconds
-            x =str(get_hotp_token(secret,intervals_no=int(time.time())//30))
-            #adding 0 in the beginning till OTP has 6 digits
-            while len(x)!=6:
-                x+='0'
-            return x
+            # ensuring to give the same otp for 30 seconds
+            x = str(get_hotp_token(secret, intervals_no=int(time.time()) // 30))
+            # pad with zeros on the left to always return a 6 digit code
+            return x.zfill(6)
         if int(now.strftime("%S"))>=20 and int(now.strftime("%S"))<=30 :
                     print("Next OTP too close, waiting for a new one")
                     sleep(6)
@@ -106,10 +104,9 @@ while True:
         #clé
         def get_totp_token_30(secret):
             current_time = int(time.time())
-            f =str(get_hotp_token(secret, intervals_no=(current_time-30)//30))
-            while len(f)!=6:
-                f+='0'
-            return f
+            f = str(get_hotp_token(secret, intervals_no=(current_time - 30) // 30))
+            # pad with zeros on the left to always return a 6 digit code
+            return f.zfill(6)
 
         if platform.system() == 'Linux':
             ipserveur = input("Enter server IP or press enter for localhost :") or "localhost";
@@ -233,9 +230,6 @@ while True:
                     print("Next code is too close, waiting for a new one ...")
                     sleep(7)
                 print(dataFromServer)
-                else:
-                print("Wrong code")
-                os.execl(sys.executable, sys.executable, *sys.argv)
                 #os.system("telnet {} {}".format(ipserveur, secretport1))
                 os.system("nc -vz {} {}".format(ipserveur, (get_totp_token_30(secretport1cle))[:-2], 2))
                 print("nc -vz {} {}".format(ipserveur, (get_totp_token_30(secretport1cle))[:-2], 2))
@@ -245,6 +239,9 @@ while True:
                 #os.system("telnet {} {}".format(ipserveur, secretport3))!:
                 os.system("nc -vz {} {}".format(ipserveur, (get_totp_token_30(secretport3cle))[:-2], 2))
                 print("nc -vz {} {}".format(ipserveur, (get_totp_token_30(secretport3cle))[:-2], 2))
+                os.execl(sys.executable, sys.executable, *sys.argv)
+            else:
+                print("Wrong code")
                 os.execl(sys.executable, sys.executable, *sys.argv)
     elif (choice == "2"):
       print(2)
@@ -317,17 +314,13 @@ while True:
             #unpacking
             return h
         def get_totp_token(secret):
-            x =str(get_hotp_token(secret,intervals_no=int(time.time())//30))
-            while len(x)!=6:
-                x+='0'
-            return x
+            x = str(get_hotp_token(secret, intervals_no=int(time.time()) // 30))
+            return x.zfill(6)
         
         def get_totp_token_30(secret):
             current_time = int(time.time())
-            f =str(get_hotp_token(secret, intervals_no=(current_time-30)//30))
-            while len(f)!=6:
-                f+='0'
-            return f
+            f = str(get_hotp_token(secret, intervals_no=(current_time - 30) // 30))
+            return f.zfill(6)
 
 
         
@@ -549,17 +542,13 @@ while True:
             #unpacking
             return h
         def get_totp_token(secret):
-            x =str(get_hotp_token(secret,intervals_no=int(time.time())//30))
-            while len(x)!=6:
-                x+='0'
-            return x
+            x = str(get_hotp_token(secret, intervals_no=int(time.time()) // 30))
+            return x.zfill(6)
         
         def get_totp_token_30(secret):
             current_time = int(time.time())
-            f =str(get_hotp_token(secret, intervals_no=(current_time-30)//30))
-            while len(f)!=6:
-                f+='0'
-            return f
+            f = str(get_hotp_token(secret, intervals_no=(current_time - 30) // 30))
+            return f.zfill(6)
 
 
         
